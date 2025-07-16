@@ -1,6 +1,7 @@
 # messenger
 
 A new Flutter project.
+After cloning the project you should change he package name to connect it with the firebase overall it is correct
 
 ## Getting Started
 
