@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+
+import 'otp.dart';
 
 class Register extends StatefulWidget{
   @override
@@ -13,6 +17,8 @@ class _Register extends State<Register>{
   TextEditingController _mailController = TextEditingController();
 
   bool _imageLoaded = false;
+
+  bool _isObsecure = true;
 
   @override
 
@@ -35,15 +41,6 @@ class _Register extends State<Register>{
         });
       });
     });
-  }
-
-
-  void validate(){
-
-  if(_formKey.currentState!.validate()){
-  print("hehe");
-  }
-
   }
 
 
@@ -101,45 +98,49 @@ class _Register extends State<Register>{
 
                             Container(
                               width: 250,
-                              child:
-                              IntlPhoneField(
-                                decoration: InputDecoration(
-                                  labelText: 'Phone Number',
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(),
-                                  ),
-                                ),
-                                initialCountryCode: 'PK', // Default country
-                                onChanged: (phone) {
-                                  print(phone.completeNumber); // full number with code
+                              child:TextFormField(
+                                obscureText: _isObsecure,
+                                validator:(value){
+                                  if(value==null || value.isEmpty){
+                                    return " Password is Required";
+                                  }
+                                  if(value.length < 8){
+                                    return "Enter a valid Password";
+                                  }
+                                  return null;
                                 },
-                              ),
-                              // TextFormField(
-                              //   // validator:,
-                              //   controller: _numberController,
-                              //   decoration: InputDecoration(
-                              //       border: OutlineInputBorder(),
-                              //       hintText: "Enter Your Number",
-                              //       labelText: "Number",
-                              //       suffixIcon: Icon(Icons.phone, color: Color.fromRGBO(55, 32, 209, 1.0),)
-                              //   ),
-                              // )
-
+                                controller: _numberController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: "Enter Your Password",
+                                    labelText: "Password",
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isObsecure ? Icons.visibility_off : Icons.visibility,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isObsecure = !_isObsecure;
+                                        });
+                                      },
+                                    ),
+                                ),
+                              )
+                              // Icon(Icons.password, color: Color.fromRGBO(55, 32, 209, 1.0),)
                             ),
-
                             SizedBox(height: 20,),
 
                             Container(
                                 width: 150,
                                 child:ElevatedButton(
-                                  onPressed: (){},
+                                  onPressed: (){ },
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.all(16),
                                     backgroundColor:Color.fromRGBO(55, 32, 209, 1.0),
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(),
                                   ),
-                                  child: Text("SEND OTP",style: TextStyle(fontSize: 16),),
+                                  child: Text("LOGIN",style: TextStyle(fontSize: 16),),
 
 
                                 )
