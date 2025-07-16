@@ -14,7 +14,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MyHomePage(),
+      debugShowCheckedModeBanner: false,
+      home: MyHomePage(),
     );
   }
 }
@@ -28,12 +29,55 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  TextEditingController _messageController = TextEditingController();
+
   @override
+
+  void dispose(){
+    super.dispose();
+    _messageController.dispose();
+  }
+
+
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Task 3"),
+        title: Text("Username"),
+      ),
+
+      body: Column(
+        children: [
+          Expanded(
+              child: Center(
+                child: Text("No messages yet....",style: TextStyle(color: Colors.grey),),
+              )
+          ),
+
+          Padding(
+              padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: "Type a message ...",
+                      ),
+                    )
+                ),
+
+                IconButton(
+                    onPressed: (){_messageController.clear();},
+                    icon: Icon(Icons.send),
+                ),
+
+              ],
+            ),
+          ),
+
+        ],
+
       ),
 
     );
