@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'friendsTab.dart';
 
 class Friends extends StatefulWidget{
   @override
@@ -10,8 +11,6 @@ class Friends extends StatefulWidget{
 
 class _Friends extends State<Friends>{
   @override
-
-
 
 
   Widget build(BuildContext context){
@@ -77,104 +76,68 @@ class RequestsTab extends StatefulWidget{
 
 class _RequestsTab extends State<RequestsTab>{
 
-  @override
-  Widget build(BuildContext context){
-    return Container(
-      child: Column(
-        children: [
-          Text("Request Tab"),
-        ],
-      ),
-    );
+  List<Map<String , dynamic>> req =[];
+  
+  void fetchReq() async {
+    
+    User ? user = await FirebaseAuth.instance.currentUser;
+    
+    if(user==null) return;
+
+    try {
+      final query = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(user.uid)
+          .collection('friendReqRec')
+          .get();
+
+      List<Map<String, dynamic>> tempList = [];
+
+      for (var doc in query.docs) {
+        final data = doc.data();
+        tempList.add({
+          'uid': data['uid'] ?? doc.id,
+          'name': data['name'] ?? '',
+          'email': data['email'] ?? '',
+          'timestamp': data['timestamp'],
+          'status': data['status'] ?? 'pending',
+        });
+      }
+
+      setState(() {
+        req = tempList;
+      });
+
+    } catch(e){
+
+    }
+
+    
   }
-}
-
-
-class addFriendsTab extends StatefulWidget{
-
+  
   @override
-  State<addFriendsTab> createState() => _addFriendsTab();
-}
 
-class _addFriendsTab extends State<addFriendsTab>{
-
-  TextEditingController _searchController = TextEditingController();
-
-  List<Map<String , dynamic>> searchUsers = [];
-
-
-
-  void dispose(){
-    _searchController.dispose();
-    super.dispose();
-
-  }
-
-  void searchUser() async{
-
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return;
-
-    String search;
-    search = _searchController.text.trim();
-    if(search.isEmpty) return;
-
-
-
-   try{
-     QuerySnapshot snapshot = await FirebaseFirestore.instance
-         .collection('user')
-         .where('name', isGreaterThanOrEqualTo: search)
-         .where('name', isLessThan: search + 'z')
-         .get();
-
-     List<Map<String, dynamic>> results = snapshot.docs
-         .map((doc) => doc.data() as Map<String, dynamic>)
-         .where((user) => user['uid'] != currentUser.uid) // 👈 Skip self
-         .toList();
-
-     setState(() {
-      searchUsers = results;
-     });
-
-   } catch(e){
-
-   }
-
+  void initState(){
+    super.initState();
+    fetchReq();
   }
 
-  @override
   Widget build(BuildContext context){
     return Center(
       child: Column(
         children: [
-          SizedBox(height: 20,),
-
-          Container(
-            width: 300,
-            child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(onPressed: (){searchUser();}, icon: Icon(Icons.search)),
-                  border: OutlineInputBorder()
-                ),
-          )
-
-
-          ),
-          SizedBox(height: 20,),
 
           Expanded(
-            child: searchUsers.isEmpty
+            child: req.isEmpty
                 ? Center(child: Text('No users found.'))
                 : ListView.builder(
-              itemCount: searchUsers.length,
+              itemCount: req.length,
               itemBuilder: (context, index) {
-                final user = searchUsers[index];
+                final user = req[index];
                 return Center(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white, // background color
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.grey.shade300),
                       boxShadow: [
@@ -185,7 +148,7 @@ class _addFriendsTab extends State<addFriendsTab>{
                           offset: Offset(0, 3),
                         ),
                       ],
-                      
+
                     ),
                     width: 300,
                     child: ListTile(
@@ -193,8 +156,8 @@ class _addFriendsTab extends State<addFriendsTab>{
                         user['name'],
                         textAlign: TextAlign.center,
                       ),
-                      
-                      trailing: IconButton(onPressed: (){}, icon: Icon(Icons.add)),
+                      leading: Icon(Icons.person),
+                      trailing: IconButton(onPressed: (){ }, icon: Icon(Icons.check)),
                     ),
                   ),
                 );
@@ -207,3 +170,5 @@ class _addFriendsTab extends State<addFriendsTab>{
     );
   }
 }
+
+
