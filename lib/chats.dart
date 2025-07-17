@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'login.dart';
-
+import 'friends.dart';
 
 class Chats extends StatefulWidget{
   @override
@@ -28,12 +28,11 @@ class _Chats extends State<Chats>{
         context: context,
         position: RelativeRect.fromLTRB(1000, 80, 0, 0),
         items: [
+          PopupMenuItem(child: Text("Friends") , value: 'friends',),
           PopupMenuItem(child: Text("Log Out") , value: 'logout',),
         ]
     ).then((value){
       if(value=="logout"){
-        // Logout();
-
         showDialog(
             context: context,
             builder: (context){
@@ -61,6 +60,10 @@ class _Chats extends State<Chats>{
         );
 
       }
+      else if(value=="friends"){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Friends()));
+      }
+
     });
   }
 
