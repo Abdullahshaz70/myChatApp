@@ -1,12 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'login.dart';
+import 'chats.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  User? user = FirebaseAuth.instance.currentUser;
+
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: user == null ? Login() : Chats(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,6 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
 
