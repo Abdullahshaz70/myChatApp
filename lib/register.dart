@@ -54,7 +54,6 @@ class _Register extends State<Register>{
     }
   }
 
-
   void saveInfo() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -74,7 +73,7 @@ class _Register extends State<Register>{
         SnackBar(content: Text("Registration Successful")),
       );
 
-      Navigator.pop(context); 
+      Navigator.pop(context);
     } catch (e) {
       String errorMessage = "Registration failed.";
 
@@ -250,7 +249,7 @@ class _Register extends State<Register>{
 
                         Container(
                             width: 150,
-                            child: _isLoading ? Center(child: CircularProgressIndicator(color: Colors.white)): ElevatedButton(
+                            child: _isLoading ? Center(child: CircularProgressIndicator(color: Color.fromRGBO(55, 32, 209, 1.0))): ElevatedButton(
                               onPressed: (){
                                 validateForm();
                                 },

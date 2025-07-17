@@ -1,8 +1,10 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'register.dart';
-
+import 'chats.dart';
 
 
 class Login extends StatefulWidget{
@@ -17,8 +19,13 @@ class _Login extends State<Login>{
   TextEditingController _mailController = TextEditingController();
 
   bool _imageLoaded = false;
-
   bool _isObsecure = true;
+  bool _isLoading = false;
+
+  String email ="";
+  String password = "";
+
+
 
   @override
 
@@ -44,6 +51,58 @@ class _Login extends State<Login>{
   }
 
 
+  void validate(){
+
+    if(_formKey.currentState!.validate()){
+      email = _mailController.text.trim();
+      password = _passwordController.text.trim();
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      login();
+
+
+    }
+
+  }
+  void login() async{
+
+    try {
+
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Login successful"))
+      );
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Chats()));
+
+    }
+    on FirebaseAuthException catch (e) {
+      String error = "Login failed";
+      if (e.code == 'user-not-found') {
+        error = "No user found with this email.";
+      } else if (e.code == 'wrong-password') {
+        error = "Incorrect password.";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred")),
+      );
+      print(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+  }
 
   Widget build(BuildContext context){
     return Scaffold(
@@ -133,8 +192,8 @@ class _Login extends State<Login>{
 
                             Container(
                                 width: 150,
-                                child:ElevatedButton(
-                                  onPressed: (){ },
+                                child: _isLoading ? Center(child: CircularProgressIndicator(color: Color.fromRGBO(55, 32, 209, 1.0))): ElevatedButton(
+                                  onPressed: (){ validate(); },
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.all(16),
                                     backgroundColor:Color.fromRGBO(55, 32, 209, 1.0),
@@ -153,7 +212,7 @@ class _Login extends State<Login>{
                     ),
                     SizedBox(height: 20,),
 
-                     Row(
+                    Row(
 
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
