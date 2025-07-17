@@ -60,8 +60,13 @@ class _RequestsTab extends State<RequestsTab>{
     final currentUid = currentUser.uid;
     final friendUid = friendData['uid'];
 
+    // Fetch current user's data from Firestore
+    final currentUserDoc = await firestore.collection('user').doc(currentUid).get();
+    final currentUserName = currentUserDoc.data()?['name'] ?? '';
+    final currentUserEmail = currentUserDoc.data()?['email'] ?? '';
+
     try {
-      // Add each other as friends
+      // Add friend to current user's list
       await firestore
           .collection('user')
           .doc(currentUid)
@@ -74,20 +79,20 @@ class _RequestsTab extends State<RequestsTab>{
         'since': FieldValue.serverTimestamp()
       });
 
-      // Add current user to friend's friend list
+      // Add current user to friend's list
       await firestore
           .collection('user')
           .doc(friendUid)
           .collection('friends')
           .doc(currentUid)
           .set({
-        'name': currentUser.displayName ?? '',
-        'email': currentUser.email ?? '',
+        'name': currentUserName,
+        'email': currentUserEmail,
         'uid': currentUid,
         'since': FieldValue.serverTimestamp()
       });
 
-      // Remove request from friendReqRec
+      // Remove friend requests
       await firestore
           .collection('user')
           .doc(currentUid)
@@ -95,7 +100,6 @@ class _RequestsTab extends State<RequestsTab>{
           .doc(friendUid)
           .delete();
 
-      // Remove request from friendReqSent
       await firestore
           .collection('user')
           .doc(friendUid)
@@ -103,7 +107,7 @@ class _RequestsTab extends State<RequestsTab>{
           .doc(currentUid)
           .delete();
 
-      // Optionally update UI
+      // Update UI
       setState(() {
         req.removeWhere((element) => element['uid'] == friendUid);
       });

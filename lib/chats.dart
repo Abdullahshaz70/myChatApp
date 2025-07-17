@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'login.dart';
 import 'friends.dart';
+import 'chatScren.widget.dart';
 
 class Chats extends StatefulWidget{
   @override
@@ -22,7 +23,6 @@ class _Chats extends State<Chats>{
           (route) => false,
     );
   }
-
   void Menu(){
     showMenu(
         context: context,
@@ -67,6 +67,34 @@ class _Chats extends State<Chats>{
     });
   }
 
+  List<Map<String, dynamic>> friends = [];
+
+  void fetchFriends() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('user')
+        .doc(currentUser.uid)
+        .collection('friends')
+        .get();
+
+    final List<Map<String, dynamic>> loadedFriends = [];
+
+    for (var doc in snapshot.docs) {
+      loadedFriends.add(doc.data());
+    }
+
+    setState(() {
+      friends = loadedFriends;
+    });
+  }
+
+  void initState(){
+    super.initState();
+    fetchFriends();
+  }
+
   Widget build (BuildContext context){
     return Scaffold(
       appBar: AppBar(
@@ -76,6 +104,38 @@ class _Chats extends State<Chats>{
         actions: [
           IconButton(onPressed: (){Menu();}, icon: Icon(Icons.more_vert)),
         ],
+      ),
+
+      body: Center(
+        child: Column(
+          children: [
+            Expanded(
+              child: friends.isEmpty
+                  ? Center(child: Text("No friends yet"))
+                  : ListView.builder(
+                itemCount: friends.length,
+                itemBuilder: (context, index) {
+                  final friend = friends[index];
+                  return ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            friendData: friend,
+                          ),
+                        ),
+                      );
+                    },
+                    leading: Icon(Icons.person),
+                    title: Text(friend['name'] ?? 'No Name'),
+                    subtitle: Text(friend['email'] ?? 'No Email'),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       
     );

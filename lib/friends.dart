@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'friendsTab.dart';
 import 'requestTab.dart';
+import 'onlyFreindsTab.dart';
 
 class Friends extends StatefulWidget{
   @override
@@ -48,24 +49,4 @@ class _Friends extends State<Friends>{
   }
 }
 
-
-class FriendsTab extends StatefulWidget{
-
-  @override
-  State<FriendsTab> createState() => _FriendsTab();
-}
-
-class _FriendsTab extends State<FriendsTab>{
-
-  @override
-  Widget build(BuildContext context){
-    return Container(
-      child: Column(
-        children: [
-          Text("Friends Tab"),
-        ],
-      ),
-    );
-  }
-}
 
