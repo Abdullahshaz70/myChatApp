@@ -29,17 +29,35 @@ class _Register extends State<Register>{
 
   @override
 
+  Future<bool> isNameTaken(String name) async {
+    final result = await FirebaseFirestore.instance
+        .collection('user')
+        .where('name', isEqualTo: name)
+        .get();
 
-  void validateForm() {
+    return result.docs.isNotEmpty;
+  }
+
+
+  void validateForm() async{
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+
 
       name = _nameController.text.trim();
       email = _mailController.text.trim();
       password = _passwordController.text.trim();
       confirmPassword = _conformPasswordController.text.trim();
+
+      if (await isNameTaken(name)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("This name is already taken")),
+        );
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+      });
 
       if (password == confirmPassword) {
         saveInfo();
