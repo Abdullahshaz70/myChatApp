@@ -78,7 +78,7 @@ class _Login extends State<Login>{
           SnackBar(content: Text("Login successful"))
       );
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Chats()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Chats()));
 
     }
     on FirebaseAuthException catch (e) {

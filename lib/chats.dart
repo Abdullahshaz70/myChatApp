@@ -23,12 +23,58 @@ class _Chats extends State<Chats>{
     );
   }
 
+  void Menu(){
+    showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(1000, 80, 0, 0),
+        items: [
+          PopupMenuItem(child: Text("Log Out") , value: 'logout',),
+        ]
+    ).then((value){
+      if(value=="logout"){
+        // Logout();
+
+        showDialog(
+            context: context,
+            builder: (context){
+              return AlertDialog(
+                title: Text('Confirm Logout'),
+                content: Text('Are you sure you want to logout?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+
+                      Navigator.pop(context);
+                      Logout();
+                    },
+                    child: Text('Logout'),
+                  ),
+                ],
+              );
+            }
+        );
+
+      }
+    });
+  }
+
   Widget build (BuildContext context){
     return Scaffold(
-      appBar: AppBar(),
-      body: ElevatedButton(
-          onPressed: (){Logout();}, child: Text("Logout"),
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(55, 32, 209, 1.0),
+        foregroundColor: Colors.white,
+        title: Text("ΦChat" , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 28),),
+        actions: [
+          IconButton(onPressed: (){Menu();}, icon: Icon(Icons.more_vert)),
+        ],
       ),
+      
     );
   }
 }

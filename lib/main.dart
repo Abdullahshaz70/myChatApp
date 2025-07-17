@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
 import 'chats.dart';
 
+// Color.fromRGBO(55, 32, 209, 1.0))
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
