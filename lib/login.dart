@@ -81,7 +81,7 @@ class _Login extends State<Login>{
       );
 
       User? user = userCredential.user;
-      await user?.reload(); 
+      await user?.reload();
       user = FirebaseAuth.instance.currentUser;
 
       if (user != null && !user.emailVerified) {

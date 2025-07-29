@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,7 +29,43 @@ class _Profile extends State<Profile> {
     }
   }
 
+  String _name = "";
+  String _about = "";
+  String _mail = "";
+
   @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) return;
+
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(user.uid)
+          .get();
+
+      if (!docSnapshot.exists) return;
+
+      final data = docSnapshot.data();
+
+      if (data != null) {
+        setState(() {
+          _name = data['name'] ?? "";
+          _mail = data['email'] ?? "";
+          _about = data['about'] ?? "";
+        });
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+  }
+
 
   void dispose(){
     super.dispose();
@@ -93,7 +130,7 @@ class _Profile extends State<Profile> {
                 child: ListTile(
                   leading: Icon(Icons.person_2_outlined),
                   title: Text("Name"),
-                  subtitle: Text("Abdullah Shahzad"),
+                  subtitle: Text("$_name"),
 
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileName()));
@@ -106,7 +143,7 @@ class _Profile extends State<Profile> {
                 child: ListTile(
                   leading: Icon(Icons.info_outline),
                   title: Text("About"),
-                  subtitle: Text("."),
+                  subtitle: Text("$_about"),
 
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileAbout()));
@@ -119,7 +156,7 @@ class _Profile extends State<Profile> {
                 child: ListTile(
                   leading: Icon(Icons.email_outlined),
                   title: Text("Email"),
-                  subtitle: Text("Abdullah Shahzad"),
+                  subtitle: Text("$_mail"),
 
                 ),
               ),

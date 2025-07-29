@@ -95,10 +95,14 @@ class _Chats extends State<Chats>{
     });
   }
 
-  void initState(){
-    super.initState();
-    fetchFriends();
-  }
+
+
+    @override
+    void initState() {
+      super.initState();
+      fetchFriends();
+    }
+
 
   Widget build (BuildContext context){
     return Scaffold(
@@ -145,4 +149,5 @@ class _Chats extends State<Chats>{
       
     );
   }
+
 }
