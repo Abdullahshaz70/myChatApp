@@ -2,7 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 import 'profileName.dart';
+import 'ProfleAbout.dart';
 
 class Profile extends StatefulWidget {
 
@@ -11,6 +15,18 @@ class Profile extends StatefulWidget {
 }
 
 class _Profile extends State<Profile> {
+
+
+  File? _imageFile;
+
+  Future<void> _pickFromCamera() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
 
@@ -33,14 +49,45 @@ class _Profile extends State<Profile> {
             children: [
 
               Center(
-                child: CircleAvatar(
-                  radius: 75,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage: NetworkImage(
-                    'https://via.placeholder.com/150', // Replace with user photo URL or leave blank
-                  ),
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 75,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: null,
+
+                      child: _imageFile==null ?  Icon(
+                        Icons.person,
+                        size: 75,
+                        color: Colors.white70,
+                      ) : null
+
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: _pickFromCamera,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withOpacity(0.6),
+                          ),
+                          padding: EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      )
+
+
+                    ),
+                  ],
                 ),
               ),
+
 
               Container(
                 child: ListTile(
@@ -61,13 +108,17 @@ class _Profile extends State<Profile> {
                   title: Text("About"),
                   subtitle: Text("."),
 
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileAbout()));
+                  },
+
                 ),
               ),
 
               Container(
                 child: ListTile(
-                  leading: Icon(Icons.local_phone_outlined),
-                  title: Text("Phone Number"),
+                  leading: Icon(Icons.email_outlined),
+                  title: Text("Email"),
                   subtitle: Text("Abdullah Shahzad"),
 
                 ),

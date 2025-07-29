@@ -1,12 +1,15 @@
+
 import 'package:flutter/material.dart';
 
-class ProfileName extends StatefulWidget {
+
+class ProfileAbout extends StatefulWidget {
   @override
-  State<ProfileName> createState() => _ProfileName();
+  State<ProfileAbout> createState() => _ProfileAbout();
 }
 
-class _ProfileName extends State<ProfileName> {
+class _ProfileAbout extends State<ProfileAbout> {
   final TextEditingController _controller = TextEditingController();
+
 
   @override
   void dispose() {
@@ -19,7 +22,7 @@ class _ProfileName extends State<ProfileName> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Name"),
+        title: Text("About"),
       ),
       body: SafeArea(
         child: Stack(
@@ -37,18 +40,18 @@ class _ProfileName extends State<ProfileName> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextFormField(
-                            maxLength: 25,
+                            maxLength: 50,
                             controller: _controller,
                             decoration: InputDecoration(
-                              label: Text("Name"),
-                              border: OutlineInputBorder(),
+                              label: Text("About"),
+                              suffixIcon: Icon(Icons.edit),
                             ),
                           ),
 
                           SizedBox(height: 8),
 
                           Text(
-                            "People will see this name",
+                            "People will see this About ",
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 14,
