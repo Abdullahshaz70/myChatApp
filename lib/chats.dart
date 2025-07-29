@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 import 'friends.dart';
 import 'chatScren.widget.dart';
+import 'profile.dart';
 
 class Chats extends StatefulWidget{
   @override
@@ -28,6 +29,7 @@ class _Chats extends State<Chats>{
         context: context,
         position: RelativeRect.fromLTRB(1000, 80, 0, 0),
         items: [
+          PopupMenuItem(child: Text("Profile") , value: 'profile',),
           PopupMenuItem(child: Text("Friends") , value: 'friends',),
           PopupMenuItem(child: Text("Log Out") , value: 'logout',),
         ]
@@ -62,6 +64,9 @@ class _Chats extends State<Chats>{
       }
       else if(value=="friends"){
         Navigator.push(context, MaterialPageRoute(builder: (context) => Friends()));
+      }
+      else if(value=="profile"){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }
 
     });
