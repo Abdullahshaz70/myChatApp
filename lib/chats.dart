@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'login.dart';
 import 'friends.dart';
 import 'chatScren.widget.dart';
 import 'profile.dart';
+import 'providers/userProvider.dart';
+
+
 
 class Chats extends StatefulWidget{
   @override
@@ -97,11 +101,24 @@ class _Chats extends State<Chats>{
 
 
 
-    @override
-    void initState() {
-      super.initState();
+    // @override
+    // void initState() {
+    //   super.initState();
+    //   fetchFriends();
+    // }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.fetchUserData();
       fetchFriends();
-    }
+    });
+  }
+
+
 
 
   Widget build (BuildContext context){

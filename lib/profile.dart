@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+
+import 'providers/userProvider.dart';
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +19,7 @@ class Profile extends StatefulWidget {
 }
 
 class _Profile extends State<Profile> {
+
 
 
   File? _imageFile;
@@ -36,42 +40,47 @@ class _Profile extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    // fetchData();
   }
 
-  Future<void> fetchData() async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-
-      if (user == null) return;
-
-      final docSnapshot = await FirebaseFirestore.instance
-          .collection('user')
-          .doc(user.uid)
-          .get();
-
-      if (!docSnapshot.exists) return;
-
-      final data = docSnapshot.data();
-
-      if (data != null) {
-        setState(() {
-          _name = data['name'] ?? "";
-          _mail = data['email'] ?? "";
-          _about = data['about'] ?? "";
-        });
-      }
-    } catch (e) {
-      print("Error fetching user data: $e");
-    }
-  }
-
+  // Future<void> fetchData() async {
+  //   try {
+  //     User? user = FirebaseAuth.instance.currentUser;
+  //
+  //     if (user == null) return;
+  //
+  //     final docSnapshot = await FirebaseFirestore.instance
+  //         .collection('user')
+  //         .doc(user.uid)
+  //         .get();
+  //
+  //     if (!docSnapshot.exists) return;
+  //
+  //     final data = docSnapshot.data();
+  //
+  //     if (data != null) {
+  //       setState(() {
+  //         _name = data['name'] ?? "";
+  //         _mail = data['email'] ?? "";
+  //         _about = data['about'] ?? "";
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching user data: $e");
+  //   }
+  // }
+  //
+  //
 
   void dispose(){
     super.dispose();
   }
 
   Widget build(BuildContext context) {
+
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
+    final friends = userProvider.friends;
 
     return Scaffold(
       appBar: AppBar(
@@ -130,7 +139,7 @@ class _Profile extends State<Profile> {
                 child: ListTile(
                   leading: Icon(Icons.person_2_outlined),
                   title: Text("Name"),
-                  subtitle: Text("$_name"),
+                  subtitle: Text(user!.name),
 
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileName()));
@@ -143,7 +152,7 @@ class _Profile extends State<Profile> {
                 child: ListTile(
                   leading: Icon(Icons.info_outline),
                   title: Text("About"),
-                  subtitle: Text("$_about"),
+                  subtitle: Text(user.about),
 
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileAbout()));
@@ -156,7 +165,7 @@ class _Profile extends State<Profile> {
                 child: ListTile(
                   leading: Icon(Icons.email_outlined),
                   title: Text("Email"),
-                  subtitle: Text("$_mail"),
+                  subtitle: Text(user.email),
 
                 ),
               ),
