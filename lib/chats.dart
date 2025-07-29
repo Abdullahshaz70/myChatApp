@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'login.dart';
+import 'authentications/login.dart';
 import 'friends.dart';
 import 'chatScren.widget.dart';
-import 'profile.dart';
+import 'profileSection/profile.dart';
 import 'providers/userProvider.dart';
 
 
@@ -99,13 +99,6 @@ class _Chats extends State<Chats>{
     });
   }
 
-
-
-    // @override
-    // void initState() {
-    //   super.initState();
-    //   fetchFriends();
-    // }
 
   @override
   void initState() {

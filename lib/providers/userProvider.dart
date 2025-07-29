@@ -34,5 +34,22 @@ class UserProvider extends ChangeNotifier {
     _friends = friendsSnap.docs.map((doc) => doc.data()).toList();
 
     notifyListeners();
+
   }
+
+  void setName(String name) {
+    if (_user != null) {
+      _user = _user!.copyWith(name: name);
+      notifyListeners();
+    }
+  }
+
+  void setAbout(String about) {
+    if (_user != null) {
+      _user = _user!.copyWith(about: about);
+      notifyListeners();
+    }
+  }
+
+
 }

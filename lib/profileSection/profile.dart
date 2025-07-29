@@ -1,16 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 
-import 'providers/userProvider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/userProvider.dart';
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'dart:async';
 
 import 'profileName.dart';
-import 'ProfleAbout.dart';
+import 'ProfileAbout.dart';
 
 class Profile extends StatefulWidget {
 
@@ -24,6 +22,49 @@ class _Profile extends State<Profile> {
 
   File? _imageFile;
 
+  bool showError = false;
+  double opacity = 0.0;
+
+  void triggerError() {
+
+    if(showError) return;
+
+    setState(() {
+      showError = true;
+      opacity = 0.0;
+    });
+
+// Fade in after a small delay
+    Future.delayed(Duration(milliseconds: 30), () {
+      if (mounted) {
+        setState(() {
+          opacity = 1.0;
+        });
+      }
+    });
+
+// Stay visible for 500ms, then fade out
+    Timer(Duration(milliseconds: 700), () {
+      if (mounted) {
+        setState(() {
+          opacity = 0.0;
+        });
+      }
+    });
+
+// Remove from widget tree after fade-out (200ms)
+    Timer(Duration(milliseconds: 1000), () {
+      if (mounted) {
+        setState(() {
+          showError = false;
+        });
+      }
+    });
+
+
+  }
+
+
   Future<void> _pickFromCamera() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -33,9 +74,7 @@ class _Profile extends State<Profile> {
     }
   }
 
-  String _name = "";
-  String _about = "";
-  String _mail = "";
+
 
   @override
   void initState() {
@@ -43,34 +82,6 @@ class _Profile extends State<Profile> {
     // fetchData();
   }
 
-  // Future<void> fetchData() async {
-  //   try {
-  //     User? user = FirebaseAuth.instance.currentUser;
-  //
-  //     if (user == null) return;
-  //
-  //     final docSnapshot = await FirebaseFirestore.instance
-  //         .collection('user')
-  //         .doc(user.uid)
-  //         .get();
-  //
-  //     if (!docSnapshot.exists) return;
-  //
-  //     final data = docSnapshot.data();
-  //
-  //     if (data != null) {
-  //       setState(() {
-  //         _name = data['name'] ?? "";
-  //         _mail = data['email'] ?? "";
-  //         _about = data['about'] ?? "";
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching user data: $e");
-  //   }
-  // }
-  //
-  //
 
   void dispose(){
     super.dispose();
@@ -78,9 +89,12 @@ class _Profile extends State<Profile> {
 
   Widget build(BuildContext context) {
 
+    final screenHeight = MediaQuery.of(context).size.height;
+
+
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.user;
-    final friends = userProvider.friends;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -117,7 +131,8 @@ class _Profile extends State<Profile> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(0.6),
+                            color: Color.fromRGBO(0, 0, 0, 0.6), // RGB + opacity
+
                           ),
                           padding: EdgeInsets.all(6),
                           child: Icon(
@@ -135,8 +150,7 @@ class _Profile extends State<Profile> {
               ),
 
 
-              Container(
-                child: ListTile(
+              ListTile(
                   leading: Icon(Icons.person_2_outlined),
                   title: Text("Name"),
                   subtitle: Text(user!.name),
@@ -146,10 +160,10 @@ class _Profile extends State<Profile> {
                   },
 
                 ),
-              ),
 
-              Container(
-                child: ListTile(
+
+
+              ListTile(
                   leading: Icon(Icons.info_outline),
                   title: Text("About"),
                   subtitle: Text(user.about),
@@ -159,9 +173,10 @@ class _Profile extends State<Profile> {
                   },
 
                 ),
-              ),
 
-              Container(
+
+              GestureDetector(
+                onTap: ()=> triggerError(),
                 child: ListTile(
                   leading: Icon(Icons.email_outlined),
                   title: Text("Email"),
@@ -170,15 +185,36 @@ class _Profile extends State<Profile> {
                 ),
               ),
 
+              if (showError)
+                Center(
+                  child: AnimatedOpacity(
+                    opacity: opacity,
+                    duration: Duration(milliseconds: 500),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      margin: EdgeInsets.symmetric(horizontal: 32),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[850], // dark gray background
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        "Email is read only for now",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
 
             ],
           ),
         ),
       ),
-
-
     );
-
   }
 
 
