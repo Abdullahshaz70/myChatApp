@@ -67,42 +67,54 @@ class _Login extends State<Login>{
     }
 
   }
-  void login() async{
+
+  void login() async {
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
-
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Login successful"))
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+        email: _mailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
 
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Chats()));
+      User? user = userCredential.user;
+      await user?.reload(); 
+      user = FirebaseAuth.instance.currentUser;
 
-    }
-    on FirebaseAuthException catch (e) {
-      String error = "Login failed";
-      if (e.code == 'user-not-found') {
-        error = "No user found with this email.";
-      } else if (e.code == 'wrong-password') {
-        error = "Incorrect password.";
+      if (user != null && !user.emailVerified) {
+        await FirebaseAuth.instance.signOut(); // Prevent login
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Email not verified. Please check your inbox.")),
+        );
+
+        // Optionally send again
+        await user.sendEmailVerification();
+        setState(() {
+          _isLoading = false;
+        });
+        return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
+
+      // If verified, continue to app
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => Chats()), // your home screen
       );
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("An error occurred")),
+        SnackBar(content: Text(e.message ?? "Login failed")),
       );
-      print(e.toString());
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
 
+    setState(() {
+      _isLoading = false;
+    });
   }
+
 
   Widget build(BuildContext context){
     return Scaffold(
