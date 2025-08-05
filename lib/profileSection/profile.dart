@@ -34,7 +34,7 @@ class _Profile extends State<Profile> {
       opacity = 0.0;
     });
 
-// Fade in after a small delay
+
     Future.delayed(Duration(milliseconds: 30), () {
       if (mounted) {
         setState(() {

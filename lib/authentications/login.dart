@@ -85,13 +85,13 @@ class _Login extends State<Login>{
       user = FirebaseAuth.instance.currentUser;
 
       if (user != null && !user.emailVerified) {
-        await FirebaseAuth.instance.signOut(); // Prevent login
+        await FirebaseAuth.instance.signOut();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Email not verified. Please check your inbox.")),
         );
 
-        // Optionally send again
+
         await user.sendEmailVerification();
         setState(() {
           _isLoading = false;
@@ -228,6 +228,7 @@ class _Login extends State<Login>{
 
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+
                           Text("Dont have an acount?" , style: TextStyle(fontSize: 12 , color: Colors.grey),),
                           GestureDetector(
 
@@ -239,7 +240,7 @@ class _Login extends State<Login>{
                               );
                             },
                             child: Text("Sign up" , style: TextStyle(color: Color.fromRGBO(55, 32, 209, 1.0)),),
-                          )
+                          ),
 
                         ],
                       ),
