@@ -20,6 +20,8 @@ class UserProvider extends ChangeNotifier {
         .doc(currentUser.uid)
         .get();
 
+
+
     if (doc.exists) {
       _user = UserModel.fromMap(doc.data()!);
     }

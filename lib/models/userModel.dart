@@ -1,24 +1,29 @@
+import 'package:flutter/cupertino.dart';
+
 class UserModel {
   final String name;
   final String email;
   final String about;
   final String uid;
-  String? photoURL;
+  final String photoURL;
+
 
   UserModel({
     required this.name,
     required this.email,
     required this.about,
     required this.uid,
-    this.photoURL,
+    required this.photoURL,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
+
     return UserModel(
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       about: map['about'] ?? '',
       uid: map['uid'] ?? '',
+      photoURL: map['photoURL'] ?? '',
     );
   }
 

@@ -42,15 +42,30 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
+  //     userProvider.fetchUserData();
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.fetchUserData();
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+
+      if (firebaseUser != null) {
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.fetchUserData();
+      }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

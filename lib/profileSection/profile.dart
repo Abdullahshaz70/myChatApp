@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +28,8 @@ final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
 
   bool showError = false;
   double opacity = 0.0;
+
+
 
   void triggerError() {
 
@@ -112,7 +115,17 @@ final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
   @override
   void initState() {
     super.initState();
+
   }
+
+void didChangeDependencies() {
+  super.didChangeDependencies();
+
+  final user = Provider.of<UserProvider>(context).user;
+  if (user?.photoURL != null) {
+    precacheImage(NetworkImage(user!.photoURL!), context);
+  }
+}
 
 
   void dispose(){
@@ -120,14 +133,11 @@ final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
   }
 
   Widget build(BuildContext context) {
-
-
-    final screenHeight = MediaQuery.of(context).size.height;
-
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.user;
 
-    print(user!.photoURL);
+    final screenHeight = MediaQuery.of(context).size.height;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -145,28 +155,18 @@ final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
 
               const SizedBox(height: 20,),
 
+
+
               Center(
                 child: Stack(
                   children: [
                     CircleAvatar(
                       radius: 75,
                       backgroundColor: Colors.grey[300],
-                      // backgroundImage: null,
-                      backgroundImage: user!.photoURL != null
-                          ? NetworkImage(user.photoURL!)
-                          : null,
-                      // child: Icon(
-                      //   Icons.person,
-                      //   size: 75,
-                      //   color: Colors.white70,
-                      // )
-                      child: user!.photoURL == null
-                          ? Icon(Icons.person, size: 75, color: Colors.white70)
-                          : null,
-
-
-
+                      backgroundImage: NetworkImage(user!.photoURL)  ,
                     ),
+
+
                     Positioned(
                       bottom: 0,
                       right: 0,
