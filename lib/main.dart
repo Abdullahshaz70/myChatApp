@@ -42,15 +42,7 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     final userProvider = Provider.of<UserProvider>(context, listen: false);
-  //     userProvider.fetchUserData();
-  //   });
-  // }
+
 
   @override
   void initState() {

@@ -148,7 +148,6 @@ class _Chats extends State<Chats>{
                     },
                     leading: Icon(Icons.person),
                     title: Text(friend['name'] ?? 'No Name'),
-                    subtitle: Text(friend['email'] ?? 'No Email'),
                   );
                 },
               ),

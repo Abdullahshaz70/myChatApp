@@ -116,6 +116,7 @@ class _addFriendsTab extends State<addFriendsTab>{
         'uid': targetUid,
         'email': targetDoc['email'],
         'status': 'pending',
+
       });
 
 
