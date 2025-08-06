@@ -22,7 +22,7 @@ class Profile extends StatefulWidget {
 
 class _Profile extends State<Profile> {
 
-
+final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
 
 
   bool showError = false;
@@ -131,6 +131,8 @@ class _Profile extends State<Profile> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: pp,
+        foregroundColor: Colors.white,
         title: Text("Profile"),
       ),
 
@@ -140,6 +142,8 @@ class _Profile extends State<Profile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              const SizedBox(height: 20,),
 
               Center(
                 child: Stack(
@@ -171,7 +175,7 @@ class _Profile extends State<Profile> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color.fromRGBO(0, 0, 0, 0.6),
+                            color: pp,
 
                           ),
                           padding: EdgeInsets.all(6),
@@ -189,10 +193,12 @@ class _Profile extends State<Profile> {
                 ),
               ),
 
+              const SizedBox(height: 20,),
 
               ListTile(
-                  leading: Icon(Icons.person_2_outlined),
-                  title: Text("Name"),
+                  leading: Icon(Icons.person_2_outlined , color: pp,),
+                  title: Text("Name",
+                  style: TextStyle(color: pp),),
                   subtitle: Text(user!.name),
 
                   onTap: (){
@@ -201,11 +207,13 @@ class _Profile extends State<Profile> {
 
                 ),
 
+              const SizedBox(height: 20,),
 
 
               ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text("About"),
+                  leading: Icon(Icons.info_outline,color: pp,),
+                  title: Text("About",
+                    style: TextStyle(color: pp),),
                   subtitle: Text(user.about),
 
                   onTap: (){
@@ -214,12 +222,14 @@ class _Profile extends State<Profile> {
 
                 ),
 
+              const SizedBox(height: 20,),
 
               GestureDetector(
                 onTap: ()=> triggerError(),
                 child: ListTile(
-                  leading: Icon(Icons.email_outlined),
-                  title: Text("Email"),
+                  leading: Icon(Icons.email_outlined,color: pp,),
+                  title: Text("Email",
+                    style: TextStyle(color: pp),),
                   subtitle: Text(user.email),
 
                 ),

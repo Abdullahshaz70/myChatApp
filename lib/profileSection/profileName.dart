@@ -41,6 +41,8 @@ class _ProfileName extends State<ProfileName> {
 
   Widget build(BuildContext context) {
 
+    final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -123,6 +125,12 @@ class _ProfileName extends State<ProfileName> {
                       Navigator.pop(context);
 
                     },
+
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: pp,
+                        foregroundColor: Colors.white
+                    ),
+
                     child: Text("Save"),
                   ),
                 ),

@@ -14,6 +14,9 @@ class _ProfileAbout extends State<ProfileAbout> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
+  final Color pp = Color.fromRGBO(55, 32, 209, 1.0);
+
+
   @override
   void initState() {
     super.initState();
@@ -97,8 +100,13 @@ class _ProfileAbout extends State<ProfileAbout> {
                   right: 16,
                   bottom: 16,
                   child: SizedBox(
+
                     height: 56,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: pp,
+                        foregroundColor: Colors.white
+                      ),
                       onPressed: () async{
 
                         final about = _controller.text.trim();
