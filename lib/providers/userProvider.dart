@@ -51,5 +51,15 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  void setPhoto( String photoURL){
+
+    if(_user != null){
+      _user = _user!.copyWith(photoURL: photoURL);
+      notifyListeners();
+
+    }
+
+  }
+
 
 }

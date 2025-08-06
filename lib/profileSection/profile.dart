@@ -1,9 +1,13 @@
 
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/userProvider.dart';
-
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 
@@ -20,7 +24,6 @@ class _Profile extends State<Profile> {
 
 
 
-  File? _imageFile;
 
   bool showError = false;
   double opacity = 0.0;
@@ -65,21 +68,50 @@ class _Profile extends State<Profile> {
   }
 
 
-  Future<void> _pickFromCamera() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
+  final picker = ImagePicker();
 
+  Future<void> pickAndUploadImage() async{
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if(pickedFile==null) return;
+
+    final file = File(pickedFile.path);
+    final url = Uri.parse('https://api.cloudinary.com/v1_1/dr3gd4rob/image/upload');
+
+    final request = http.MultipartRequest('POST', url)
+      ..fields['upload_preset'] = 'desktopPics'
+      ..fields['folder'] = 'userPhotos'
+      ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final respData = await response.stream.bytesToString();
+      final decoded = json.decode(respData);
+      final imageUrl = decoded['secure_url'];
+      print('Image uploaded: $imageUrl');
+
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'photoURL': imageUrl});
+
+
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.setPhoto(imageUrl);
+
+
+    } else {
+      print('Upload failed: ${response.statusCode}');
+    }
+
+  }
 
 
   @override
   void initState() {
     super.initState();
-    // fetchData();
   }
 
 
@@ -89,12 +121,13 @@ class _Profile extends State<Profile> {
 
   Widget build(BuildContext context) {
 
-    final screenHeight = MediaQuery.of(context).size.height;
 
+    final screenHeight = MediaQuery.of(context).size.height;
 
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.user;
 
+    print(user!.photoURL);
 
     return Scaffold(
       appBar: AppBar(
@@ -114,24 +147,31 @@ class _Profile extends State<Profile> {
                     CircleAvatar(
                       radius: 75,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage: null,
+                      // backgroundImage: null,
+                      backgroundImage: user!.photoURL != null
+                          ? NetworkImage(user.photoURL!)
+                          : null,
+                      // child: Icon(
+                      //   Icons.person,
+                      //   size: 75,
+                      //   color: Colors.white70,
+                      // )
+                      child: user!.photoURL == null
+                          ? Icon(Icons.person, size: 75, color: Colors.white70)
+                          : null,
 
-                      child: _imageFile==null ?  Icon(
-                        Icons.person,
-                        size: 75,
-                        color: Colors.white70,
-                      ) : null
+
 
                     ),
                     Positioned(
                       bottom: 0,
                       right: 0,
                       child: GestureDetector(
-                        onTap: _pickFromCamera,
+                        onTap: (){pickAndUploadImage();},
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color.fromRGBO(0, 0, 0, 0.6), // RGB + opacity
+                            color: Color.fromRGBO(0, 0, 0, 0.6),
 
                           ),
                           padding: EdgeInsets.all(6),
@@ -216,6 +256,5 @@ class _Profile extends State<Profile> {
       ),
     );
   }
-
-
 }
+

@@ -3,10 +3,15 @@ class UserModel {
   final String email;
   final String about;
   final String uid;
+  String? photoURL;
 
-  UserModel({required this.name, required this.email, required this.about , required this.uid});
-
-
+  UserModel({
+    required this.name,
+    required this.email,
+    required this.about,
+    required this.uid,
+    this.photoURL,
+  });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -17,14 +22,29 @@ class UserModel {
     );
   }
 
-    UserModel copyWith({String? name, String? email, String? about , String? uid}) {
-      return UserModel(
-        name: name ?? this.name,
-        email: email ?? this.email,
-        about: about ?? this.about,
-        uid: uid ?? this.uid,
-      );
-    }
+  UserModel copyWith({
+    String? name,
+    String? email,
+    String? about,
+    String? uid,
+    String? photoURL,
+  }) {
+    return UserModel(
+      name: name ?? this.name,
+      email: email ?? this.email,
+      about: about ?? this.about,
+      uid: uid ?? this.uid,
+      photoURL: photoURL ?? this.photoURL,
+    );
+  }
 
-
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'email': email,
+      'about': about,
+      'uid': uid,
+      'photoURL': photoURL,
+    };
+  }
 }
